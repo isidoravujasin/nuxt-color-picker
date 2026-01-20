@@ -1,13 +1,7 @@
-<template>
-  <main class="app">
-    <h1>Nuxt color picker</h1>
-    <p>Work in progress</p>
-  </main>
-</template>
+<script setup lang="ts">
+import ColorPickerView from '../components/color-picker/ColorPickerView.vue'
+</script>
 
-<style>
-  .app {
-    padding: 2rem;
-    font-family: system-ui, sans-serif;
-  }
-</style>
+<template>
+  <ColorPickerView />
+</template>
