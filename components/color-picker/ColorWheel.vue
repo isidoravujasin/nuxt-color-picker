@@ -9,6 +9,11 @@ const props = defineProps<{
   saturation: number
 }>()
 
+const emit = defineEmits<{
+  (e: 'select', payload: { hue: number; saturation: number }): void
+}>()
+
+
 const markerStyle = computed(() => {
   const r = size / 2
 
@@ -73,13 +78,38 @@ function drawWheel(canvas: HTMLCanvasElement) {
   ctx.restore()
 }
 
+function onPick(event: MouseEvent) {
+  const canvas = canvasRef.value
+  if (!canvas) return
+
+  const rect = canvas.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+
+  const r = size / 2
+  const dx = x - r
+  const dy = y - r
+  const dist = Math.sqrt(dx * dx + dy * dy)
+
+  if (dist > r) return
+
+  const saturation = Math.min(1, dist / r)
+
+  let angle = Math.atan2(dy, dx) 
+  let hue = (angle * 180) / Math.PI 
+  hue = (hue + 90 + 360) % 360 
+
+  emit('select', { hue, saturation })
+}
+
+
 onMounted(() => {
   if (canvasRef.value) drawWheel(canvasRef.value)
 })
 </script>
 
 <template>
-  <div class="wrap">
+  <div class="wrap" @click="onPick">
     <canvas ref="canvasRef" class="wheel" />
     <div class="marker" :style="markerStyle"></div>
   </div>
