@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { clamp01 } from '../../utils/color'
+
   type Props = {
     modelValue: number;
   };
@@ -9,9 +11,6 @@ const emit=defineEmits<{
   (e: 'update:modelValue', value: number): void
 }>()
 
-function clamp01(value: number) {
-  return Math.min(1, Math.max(0, value));
-}
 
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement;
