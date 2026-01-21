@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
+import { clamp01 } from '../../utils/color'
 
 const size = 220
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -13,13 +14,15 @@ const emit = defineEmits<{
   (e: 'select', payload: { hue: number; saturation: number }): void
 }>()
 
+function normalizeHue(h: number) {
+  return ((h % 360) + 360) % 360
+}
 
 const markerStyle = computed(() => {
   const r = size / 2
 
-  const h = ((props.hue % 360) + 360) % 360
-
-  const s = Math.min(1, Math.max(0, props.saturation))
+  const h = normalizeHue(props.hue)
+  const s = clamp01(props.saturation)
 
   const angle = ((h - 90) * Math.PI) / 180
   const dist = s * r
@@ -32,7 +35,6 @@ const markerStyle = computed(() => {
     top: `${y}px`,
   }
 })
-
 
 function drawWheel(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext('2d')
@@ -48,14 +50,12 @@ function drawWheel(canvas: HTMLCanvasElement) {
   const r = size / 2
   ctx.clearRect(0, 0, size, size)
 
-  // Clip to circle
   ctx.save()
   ctx.beginPath()
   ctx.arc(r, r, r, 0, Math.PI * 2)
   ctx.clip()
 
-  // 1) Hue around the circle (conic gradient)
-  const hue = ctx.createConicGradient(-Math.PI / 2, r, r) // start at top
+  const hue = ctx.createConicGradient(-Math.PI / 2, r, r)
   hue.addColorStop(0.0, 'rgb(255, 0, 0)')
   hue.addColorStop(1 / 6, 'rgb(255, 255, 0)')
   hue.addColorStop(2 / 6, 'rgb(0, 255, 0)')
@@ -67,7 +67,6 @@ function drawWheel(canvas: HTMLCanvasElement) {
   ctx.fillStyle = hue
   ctx.fillRect(0, 0, size, size)
 
-  // 2) Saturation: white in the center fading outwards
   const sat = ctx.createRadialGradient(r, r, 0, r, r, r)
   sat.addColorStop(0, 'rgba(255,255,255,1)')
   sat.addColorStop(1, 'rgba(255,255,255,0)')
@@ -93,15 +92,14 @@ function onPick(event: MouseEvent) {
 
   if (dist > r) return
 
-  const saturation = Math.min(1, dist / r)
+  const saturation = clamp01(dist / r)
 
-  let angle = Math.atan2(dy, dx) 
-  let hue = (angle * 180) / Math.PI 
-  hue = (hue + 90 + 360) % 360 
+  const angle = Math.atan2(dy, dx)
+  let hue = (angle * 180) / Math.PI
+  hue = normalizeHue(hue + 90)
 
   emit('select', { hue, saturation })
 }
-
 
 onMounted(() => {
   if (canvasRef.value) drawWheel(canvasRef.value)

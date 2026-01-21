@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { clamp01 } from '../../utils/color'
-
+  
   type Props = {
     modelValue: number;
   };
@@ -19,7 +19,6 @@ function handleInput(event: Event) {
   const target = event.target as HTMLInputElement
   emit('update:modelValue', nextBrightnessFromInput(target))
 }
-
 
 </script>
 
