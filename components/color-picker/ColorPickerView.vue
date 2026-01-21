@@ -3,6 +3,9 @@ import ColorWheel from './ColorWheel.vue'
 import BrightnessSlider from './BrightnessSlider.vue'
 import PresetsBar from './PresetsBar.vue'
 import ColorPreview from './ColorPreview.vue'
+
+import { ref } from 'vue'
+const brightness=ref(1)
 </script>
 
 <template>
@@ -17,11 +20,11 @@ import ColorPreview from './ColorPreview.vue'
       </div>
 
       <div class="sliderWrap">
-        <BrightnessSlider />
+        <BrightnessSlider v-model="brightness" />
       </div>
 
       <div class="previewWrap">
-        <ColorPreview />
+        <ColorPreview :brightness="brightness"/>
       </div>
 
       <div class="presetsWrap">
