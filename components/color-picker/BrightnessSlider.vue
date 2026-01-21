@@ -11,12 +11,15 @@ const emit=defineEmits<{
   (e: 'update:modelValue', value: number): void
 }>()
 
+function nextBrightnessFromInput(target: HTMLInputElement): number {
+  return clamp01(Number(target.value))
+}
 
 function handleInput(event: Event) {
-  const target = event.target as HTMLInputElement;
-  const next = clamp01(Number(target.value));
-  emit('update:modelValue', next);
+  const target = event.target as HTMLInputElement
+  emit('update:modelValue', nextBrightnessFromInput(target))
 }
+
 
 </script>
 
