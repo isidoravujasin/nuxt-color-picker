@@ -9,6 +9,12 @@ import { ref } from 'vue'
 const hue = ref(210)       
 const saturation = ref(0.8) 
 const brightness = ref(1)  
+
+function onWheelSelect(payload: { hue: number; saturation: number }) {
+  hue.value = payload.hue
+  saturation.value = payload.saturation
+}
+
 </script>
 
 <template>
@@ -19,7 +25,13 @@ const brightness = ref(1)
 
     <section class="card">
       <div class="wheelWrap">
-        <ColorWheel :hue="hue" :saturation="saturation" />
+        <ColorWheel
+          :hue="hue"
+          :saturation="saturation"
+          @select="onWheelSelect"
+        />
+
+
       </div>
 
       <div class="sliderWrap">
