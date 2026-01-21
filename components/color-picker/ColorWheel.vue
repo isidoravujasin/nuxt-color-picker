@@ -1,8 +1,33 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 const size = 220
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+const props = defineProps<{
+  hue: number
+  saturation: number
+}>()
+
+const markerStyle = computed(() => {
+  const r = size / 2
+
+  const h = ((props.hue % 360) + 360) % 360
+
+  const s = Math.min(1, Math.max(0, props.saturation))
+
+  const angle = ((h - 90) * Math.PI) / 180
+  const dist = s * r
+
+  const x = r + Math.cos(angle) * dist
+  const y = r + Math.sin(angle) * dist
+
+  return {
+    left: `${x}px`,
+    top: `${y}px`,
+  }
+})
+
 
 function drawWheel(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext('2d')
@@ -56,6 +81,7 @@ onMounted(() => {
 <template>
   <div class="wrap">
     <canvas ref="canvasRef" class="wheel" />
+    <div class="marker" :style="markerStyle"></div>
   </div>
 </template>
 
@@ -66,8 +92,19 @@ onMounted(() => {
   border-radius: 999px;
   overflow: hidden;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  position: relative;
 }
 .wheel {
   display: block;
+}
+.marker {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 </style>

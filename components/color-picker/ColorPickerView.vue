@@ -19,7 +19,7 @@ const brightness = ref(1)
 
     <section class="card">
       <div class="wheelWrap">
-        <ColorWheel />
+        <ColorWheel :hue="hue" :saturation="saturation" />
       </div>
 
       <div class="sliderWrap">
