@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { clamp01 } from '../../utils/color'
+import { normalizeHue, hueSatFromPoint } from '../../utils/wheelMath'
 
 const size = 220
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -13,10 +14,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'select', payload: { hue: number; saturation: number }): void
 }>()
-
-function normalizeHue(h: number) {
-  return ((h % 360) + 360) % 360
-}
 
 const markerStyle = computed(() => {
   const r = size / 2
@@ -77,28 +74,24 @@ function drawWheel(canvas: HTMLCanvasElement) {
   ctx.restore()
 }
 
+function pointInCanvas(event: MouseEvent, canvas: HTMLCanvasElement) {
+  const rect = canvas.getBoundingClientRect()
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top,
+  }
+}
+
 function onPick(event: MouseEvent) {
   const canvas = canvasRef.value
   if (!canvas) return
 
-  const rect = canvas.getBoundingClientRect()
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
+  const { x, y } = pointInCanvas(event, canvas)
 
-  const r = size / 2
-  const dx = x - r
-  const dy = y - r
-  const dist = Math.sqrt(dx * dx + dy * dy)
+  const result = hueSatFromPoint(x, y, size)
+  if (!result) return
 
-  if (dist > r) return
-
-  const saturation = clamp01(dist / r)
-
-  const angle = Math.atan2(dy, dx)
-  let hue = (angle * 180) / Math.PI
-  hue = normalizeHue(hue + 90)
-
-  emit('select', { hue, saturation })
+  emit('select', result)
 }
 
 onMounted(() => {
@@ -122,9 +115,11 @@ onMounted(() => {
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   position: relative;
 }
+
 .wheel {
   display: block;
 }
+
 .marker {
   position: absolute;
   width: 16px;
