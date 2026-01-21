@@ -5,7 +5,10 @@ import PresetsBar from './PresetsBar.vue'
 import ColorPreview from './ColorPreview.vue'
 
 import { ref } from 'vue'
-const brightness=ref(1)
+
+const hue = ref(210)       
+const saturation = ref(0.8) 
+const brightness = ref(1)  
 </script>
 
 <template>
@@ -24,7 +27,7 @@ const brightness=ref(1)
       </div>
 
       <div class="previewWrap">
-        <ColorPreview :brightness="brightness"/>
+        <ColorPreview :hue="hue" :saturation="saturation" :brightness="brightness" />
       </div>
 
       <div class="presetsWrap">
