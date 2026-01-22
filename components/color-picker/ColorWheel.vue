@@ -5,6 +5,7 @@ import { normalizeHue, hueSatFromPoint } from '../../utils/wheelMath'
 
 const size = 220
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+const isDragging = ref(false) 
 
 const props = defineProps<{
   hue: number
@@ -14,6 +15,49 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'select', payload: { hue: number; saturation: number }): void
 }>()
+
+function pointInCanvas(event: PointerEvent, canvas: HTMLCanvasElement) {
+  const rect = canvas.getBoundingClientRect()
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top,
+  }
+}
+
+function pickFromEvent(event: PointerEvent) {
+  const canvas = canvasRef.value
+  if (!canvas) return
+
+  const { x, y } = pointInCanvas(event, canvas)
+  const result = hueSatFromPoint(x, y, size)
+  if (!result) return
+
+  emit('select', result)
+}
+
+function onPointerDown(event: PointerEvent) {
+  isDragging.value = true
+  ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+  pickFromEvent(event)
+}
+
+function onPointerMove(event: PointerEvent) {
+  if (!isDragging.value) return
+  pickFromEvent(event)
+}
+
+function onPointerUp(event: PointerEvent) {
+  pickFromEvent(event)
+  isDragging.value = false
+  const el = event.currentTarget as HTMLElement | null
+  if (!el) return
+
+  try {
+    el.releasePointerCapture(event.pointerId)
+  } catch {
+    // ok 
+  }
+}
 
 const markerStyle = computed(() => {
   const r = size / 2
@@ -74,33 +118,20 @@ function drawWheel(canvas: HTMLCanvasElement) {
   ctx.restore()
 }
 
-function pointInCanvas(event: MouseEvent, canvas: HTMLCanvasElement) {
-  const rect = canvas.getBoundingClientRect()
-  return {
-    x: event.clientX - rect.left,
-    y: event.clientY - rect.top,
-  }
-}
-
-function onPick(event: MouseEvent) {
-  const canvas = canvasRef.value
-  if (!canvas) return
-
-  const { x, y } = pointInCanvas(event, canvas)
-
-  const result = hueSatFromPoint(x, y, size)
-  if (!result) return
-
-  emit('select', result)
-}
-
 onMounted(() => {
   if (canvasRef.value) drawWheel(canvasRef.value)
 })
 </script>
 
 <template>
-  <div class="wrap" @click="onPick">
+  <div 
+    class="wrap" 
+    :class="{ dragging: isDragging }"
+    @pointerdown="onPointerDown"
+    @pointermove="onPointerMove" 
+    @pointerup="onPointerUp" 
+    @pointercancel="onPointerUp"
+  >
     <canvas ref="canvasRef" class="wheel" />
     <div class="marker" :style="markerStyle"></div>
   </div>
@@ -114,6 +145,13 @@ onMounted(() => {
   overflow: hidden;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   position: relative;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+
+.wrap.dragging {
+  cursor: grabbing;
 }
 
 .wheel {
