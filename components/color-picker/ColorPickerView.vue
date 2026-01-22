@@ -10,6 +10,7 @@ import { ref } from 'vue'
 const hue = ref(210)       
 const saturation = ref(0.8) 
 const brightness = ref(1)  
+const activePresetId = ref<string | null>(null)
 
 type PresetHSV = { id: string; h: number; s: number; v: number }
 
@@ -33,12 +34,19 @@ function onPresetSelect(id: string) {
   hue.value = found.h
   saturation.value = found.s
   brightness.value = found.v
+  activePresetId.value = id
 }
 
 
 function onWheelSelect(payload: { hue: number; saturation: number }) {
   hue.value = payload.hue
   saturation.value = payload.saturation
+  activePresetId.value = null
+}
+
+function onBrightnessChange(value: number) {
+  brightness.value = value
+  activePresetId.value = null
 }
 
 </script>
@@ -56,12 +64,13 @@ function onWheelSelect(payload: { hue: number; saturation: number }) {
           :saturation="saturation"
           @select="onWheelSelect"
         />
-
-
       </div>
 
       <div class="sliderWrap">
-        <BrightnessSlider v-model="brightness" />
+        <BrightnessSlider
+          :model-value="brightness"
+          @update:model-value="onBrightnessChange"
+        />
       </div>
 
       <div class="previewWrap">
@@ -71,7 +80,7 @@ function onWheelSelect(payload: { hue: number; saturation: number }) {
       <div class="presetsWrap">
         <PresetsBar 
           :presets="presets"
-          :active-id="'1'"
+          :active-id="activePresetId ?? undefined"
           @select="onPresetSelect"
         />
       </div>
