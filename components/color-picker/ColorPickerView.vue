@@ -3,12 +3,38 @@ import ColorWheel from './ColorWheel.vue'
 import BrightnessSlider from './BrightnessSlider.vue'
 import PresetsBar from './PresetsBar.vue'
 import ColorPreview from './ColorPreview.vue'
+import { hsvToHex } from '../../utils/color'
 
 import { ref } from 'vue'
 
 const hue = ref(210)       
 const saturation = ref(0.8) 
 const brightness = ref(1)  
+
+type PresetHSV = { id: string; h: number; s: number; v: number }
+
+const presetValues: PresetHSV[] = [
+  { id: '1', h: 270, s: 0.45, v: 0.85 }, 
+  { id: '2', h: 200, s: 0.70, v: 0.90 }, 
+  { id: '3', h: 130, s: 0.65, v: 0.85 }, 
+  { id: '4', h: 35,  s: 0.75, v: 0.95 }, 
+  { id: '5', h: 0,   s: 0.70, v: 0.90 }, 
+]
+
+const presets = presetValues.map(p => ({
+  id: p.id,
+  color: hsvToHex({ h: p.h, s: p.s, v: p.v }),
+}))
+
+function onPresetSelect(id: string) {
+  const found = presetValues.find(p => p.id === id)
+  if (!found) return
+
+  hue.value = found.h
+  saturation.value = found.s
+  brightness.value = found.v
+}
+
 
 function onWheelSelect(payload: { hue: number; saturation: number }) {
   hue.value = payload.hue
@@ -43,7 +69,11 @@ function onWheelSelect(payload: { hue: number; saturation: number }) {
       </div>
 
       <div class="presetsWrap">
-        <PresetsBar />
+        <PresetsBar 
+          :presets="presets"
+          :active-id="'1'"
+          @select="onPresetSelect"
+        />
       </div>
     </section>
   </main>
