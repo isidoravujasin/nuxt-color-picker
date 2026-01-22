@@ -89,10 +89,18 @@ function onBrightnessChange(value: number) {
 </template>
 
 <style scoped>
-.page { min-height: 100vh; display: grid; place-items: center; font-family: system-ui, sans-serif; }
-.card { width: 360px; padding: 20px; border-radius: 20px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-.header { margin-bottom: 12px; }
-.title { font-size: 1.1rem; margin: 0; color: #6d5bd0; }
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 72px;     
+  font-family: system-ui, sans-serif;
+  background-color: #F2F0FF;
+}
+.card { width: 360px; padding: 20px; border-radius: 20px; background: white; box-shadow: 0 14px 40px rgba(0,0,0,0.10); }
+.header { margin-bottom: 200px;}
+.title { font-size: 1.1rem; margin: 0; color: #6d5bd0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 .wheelWrap { display: grid; place-items: center; padding: 12px 0; }
 .sliderWrap { margin-top: 12px; }
 .previewWrap { margin-top: 16px; }
