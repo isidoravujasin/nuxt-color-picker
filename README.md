@@ -2,8 +2,7 @@
 
 Simple color picker built with Vue 3 and Nuxt.
 
-This project was created as a technical task after an interview.
-The main goal was to build a color picker **without using any third-party UI or color libraries**, while keeping the code readable and easy to extend.
+The goal of this project is to provide a clean and extensible color picker implementation **without using any third-party UI or color libraries**, focusing on clarity, maintainability, and core logic.
 
 ---
 
@@ -14,7 +13,7 @@ The main goal was to build a color picker **without using any third-party UI or 
 - Preset color selection
 - Live color preview
 - Mouse, touch and pointer drag support
-- No external libraries used
+- No external UI or color libraries used
 
 ---
 
@@ -24,19 +23,20 @@ The main goal was to build a color picker **without using any third-party UI or 
 - Nuxt
 - TypeScript
 - HTML Canvas
+- Vitest (unit testing)
 
 ---
 
 ## Project structure
 
-I tried to keep the project simple and modular:
+The project is kept simple and modular:
 
 - Color-related math (HSV, clamping, conversions) is placed in `utils/color.ts`
 - Color wheel math is extracted into `utils/wheelMath.ts`
 - Canvas drawing logic is separated into `utils/drawWheel.ts`
 - Vue components focus mainly on UI and user interaction
 
-This structure helps keep the components smaller and makes the core logic easier to reason about.
+This structure keeps components smaller and makes the core logic easier to reason about and test.
 
 ---
 
@@ -53,3 +53,14 @@ This structure helps keep the components smaller and makes the core logic easier
 ```bash
 npm install
 npm run dev
+
+---
+
+## Testing
+
+Unit tests are written for core color and math utilities using Vitest.
+
+```bash
+npm run test:run
+
+
