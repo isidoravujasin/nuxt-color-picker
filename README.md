@@ -1,75 +1,55 @@
-# Nuxt Minimal Starter
+# Color Picker
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Simple color picker built with Vue 3 and Nuxt.
 
-## Setup
+This project was created as a technical task after an interview.
+The main goal was to build a color picker **without using any third-party UI or color libraries**, while keeping the code readable and easy to extend.
 
-Make sure to install dependencies:
+---
+
+## Features
+
+- Hue and saturation selection using a canvas-based color wheel
+- Brightness control with a slider
+- Preset color selection
+- Live color preview
+- Mouse, touch and pointer drag support
+- No external libraries used
+
+---
+
+## Tech stack
+
+- Vue 3 (Composition API)
+- Nuxt
+- TypeScript
+- HTML Canvas
+
+---
+
+## Project structure
+
+I tried to keep the project simple and modular:
+
+- Color-related math (HSV, clamping, conversions) is placed in `utils/color.ts`
+- Color wheel math is extracted into `utils/wheelMath.ts`
+- Canvas drawing logic is separated into `utils/drawWheel.ts`
+- Vue components focus mainly on UI and user interaction
+
+This structure helps keep the components smaller and makes the core logic easier to reason about.
+
+---
+
+## Accessibility and UX
+
+- Pointer events are used to support both mouse and touch interactions
+- Cursor states change during drag interactions
+- Components communicate via explicit props and events
+
+---
+
+## Running the project
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
